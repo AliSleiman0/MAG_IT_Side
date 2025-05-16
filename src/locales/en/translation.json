@@ -1,0 +1,186 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "change_theme": "Change Theme",
+    "change_lang": "Change Language",
+    "confirm": "Confirm",
+    "error": "Error",
+    "back": "Back"
+  },
+  "sider": {
+    "plan_of_study": "Plan of Study",
+    "dynamic_pos": "Dynamic POS",
+    "customized_pos": "Customized POS",
+    "logout": "Logout",
+    "forget_pass": "Forget Password",
+    "profile": "Profile",
+    "auth_pages": "Auth",
+    "schedule": "Scheduling Tool",
+    "advisor": "Respective Advisors",
+    "chat": "Contact Advisor",
+    "advisor_text1": "Academic Advisors",
+    "advisor_text2": "Meet our experienced faculty members corresponding to your school and campus",
+    "reach_out": "Reach Out"
+
+  },
+  "profile": {
+    "profile": "Profile",
+    "personal_info": "Personal Info",
+    "security_settings": "Security Settings",
+    "full_name": "Full Name",
+    "id": "ID",
+    "email": "Email",
+    "campus": "Campus",
+    "update_profile_image": "Update Profile",
+    "basic": "Basic upload",
+    "bulkUpload": "You can update your profile photo here just by dragging a new profile",
+    "clickToUpload": "Click to upload",
+    "directory": "Upload directory",
+    "dragger": "Dragger upload",
+    "dragUpload": "Click or drag file to this area to upload",
+    "failedUpload": "{{name}} file upload failed.",
+    "successUpload": "{{name}} file uploaded successfully.",
+    "change_password": "Change Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm Password",
+    "required": "Required"
+
+  },
+  "securitySettings": {
+    "changePassword": "Change Password",
+    "confirmPassword": "Confirm Password",
+    "currentPassword": "Current Password",
+    "dontMatchPassword": "The two passwords that you entered do not match",
+    "newPassword": "New Password",
+    "notValidPassword": "Your password should be minimum eight characters and contain at least one uppercase letter, one lowercase letter and one number",
+    "requiredPassword": "Please input your password!",
+    "samePassword": "Your new password can't be same as previous password",
+    "title": "Security Settings",
+    "twoFactorAuth": "Two–factor authentication",
+    "verify": "Verify"
+  },
+
+  "welcome": {
+    "semester_fall": "Fall Semester",
+    "semester_spring": "Spring Semester",
+    "semester_summer": "Summer Semester",
+    "title": "Welcome back! It’s ",
+    "registration": " Registration is currently ",
+    "reg_status_open": "Open",
+    "reg_status_closed": "Closed",
+    "contact": ". If you have any questions, do not hesitate to contact your advisor via the built-in chatting tool."
+  },
+  "courses": {
+    "my_courses": "My Courses",
+    "completed_vs_required": {
+      "title": "Completed vs. Required Courses",
+      "progress": "Progress",
+      "completed": "Completed",
+      "remaining": "Remaining"
+    },
+    "passed_percentage": {
+      "title": "% Passed/Taken Courses",
+      "percentage": "Percentage",
+      "passed": "Passed",
+      "failed": "Failed"
+    },
+    "credits": {
+      "credits": "Credits",
+      "title": "Credits Completed",
+      "progress": "Progress",
+      "completed": "Completed",
+      "remaining": "Remaining",
+      "failed_withdrawn": "Failed/Withdrawn"
+    },
+    "course_types": {
+      "Core": "Core",
+      "Major": "Major",
+      "Major Elective": "Major Elective",
+      "General Elective": "General Elective",
+      "General Education": "General Education"
+    },
+    "courses_lists": {
+      "completed_courses": "Completed Courses",
+      "currently_registered": "Currently Registered",
+      "remianing_failed_courses": "Remaining-Failed Courses"
+    },
+    "register_status": {
+      "can_register": "You can register this course",
+      "cannot_register": "You cannot register this course"
+    },
+    "failed_withdrawn_status": {
+      "status_f": "Retake Needed",
+      "status_w": "Withdrawn"
+    }
+  },
+
+  "days": {
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat",
+    "sunday": "Sun",
+    "mon_wed": "Mon,Wed",
+    "tues_thurs": "Tue,Thu"
+
+  },
+
+  "time_periods": {
+    "am": "AM",
+    "pm": "PM"
+  },
+
+
+  "footer": {
+    "f_text1": "Made by",
+    "f_text2": "in",
+    "f_text3": "Based on"
+  },
+  "grades": {
+    "distribution": "My Grades Distribution"
+  },
+  "pos": {
+    "show": "Show Courses Status",
+    "prerequisites": "Prerequisites",
+    "corequisites": "Corequisites",
+    "legends": "Legends",
+    "passed_course": "Passed Course",
+    "registered_course": "Registered Course",
+    "failed_course": "Failed Course",
+    "source_course": "Source course",
+    "target_course": "Target course",
+    "text": "Plan of Study of "
+  },
+  "customised_pos": {
+    "title": "Customised Study Plan for ",
+    "Best_title": "Best Study Plan for ",
+    "generate_remaining_semesters": "Generate Remaining Semesters",
+    "place_holder": "Add Courses to Fill your Plan!",
+    "select": "Select",
+    "priority": "Priority",
+    "course_name": "Course Name",
+    "code": "Code",
+    "type": "Type",
+    "credits": "credits",
+    "modal_title_generate": "Confirm Generation",
+    "modal_text_generate_customized": "We'll generate your remaining semesters ",
+    "modal_text_generate_customized1": "based on your upcoming semester plan.",
+    "modal_text_generate_customized2": "This process may take a moment.",
+    "modal_text_generate_dynamic": "We'll generate your remaining semesters based on the best upcoming semester plan. This process may take a moment.",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "show_full_timeline": "Show Full Timeline",
+    "generated_semesters": "Generated Semesters",
+    "collapse_view": "Collapse View",
+    "creating_your_optimal_semester_plan": "Creating your optimal semester plan...",
+    "courses_eligible_for_registration_below": "Courses Eligible for Registration Below:",
+    "modal_max1": "Maximum 20 credits allowed. Currently selected: ",
+    "modal_max2": "Please deselect some courses before selecting new ones.",
+    "upcoming": "Upcoming",
+    "credits_selected": "Credits Selected",
+    "no_courses_available": "No courses available"
+
+  }
+}
