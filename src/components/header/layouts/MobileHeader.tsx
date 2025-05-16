@@ -15,15 +15,11 @@ interface MobileHeaderProps {
 export const MobileHeader: React.FC<MobileHeaderProps> = ({ toggleSider, isSiderOpened }) => {
   return (
     <BaseRow justify="space-between" align="middle">
-      <BaseCol>
-        <ProfileDropdown />
-      </BaseCol>
+      
 
       <BaseCol>
         <BaseRow align="middle">
-          <BaseCol>
-            <NotificationsDropdown />
-          </BaseCol>
+       
 
           <BaseCol>
             <SettingsDropdown />
