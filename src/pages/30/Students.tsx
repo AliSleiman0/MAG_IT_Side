@@ -1,5 +1,8 @@
 ﻿// ExcelUpload.tsx
-import React, { useState } from 'react';
+import { Select, Button, notification } from 'antd';
+import Table, { ColumnsType } from 'antd/lib/table';
+import { text } from 'node:stream/consumers';
+import React, { useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
 
 export interface PlanOfStudy {
@@ -10,14 +13,22 @@ export interface PlanOfStudy {
 }
 
 export interface Course {
-    id: number;
+  
     code: string;
     title: string;
     credits: number;
     type: CourseType;
     semesters: SemesterType;
 }
-
+export interface TableCourse {
+    code: string;
+    title: string;
+    credits: number;
+    type: CourseType;
+    semesters: SemesterType;
+    prerequisites: string;
+    corequisites: string;
+}
 export type CourseType =
     | 'Core'
     | 'Major'
@@ -35,12 +46,22 @@ export type SemesterType =
     | 'Fall-Spring-Summer';
 
 export interface CourseLink {
-    courseId: number;
-    coursePre: number;
-    courseCo: number;
+    courseId: string;
+    coursePre: string;
+    courseCo: string;
 }
+const departments = [
+    { id: 101, name: 'Communication Engineering' },
+    { id: 102, name: 'Computer Science' },
+    { id: 103, name: 'Mechanical Engineering' }
+];
+
 //$env:NODE_OPTIONS = "--openssl-legacy-provider"; yarn start
 const ExcelUpload: React.FC = () => {
+    const [selectedDept, setSelectedDept] = useState<number | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [columnsRaw, setColumnsRaw] = useState<string[]>();
+    const [dataRaw, setDataRaw] = useState<TableCourse[]>([]);
     const [planOfStudy, setPlanOfStudy] = useState<PlanOfStudy>({
         departmentId: 0,
         departmentName: '',
@@ -70,7 +91,7 @@ const ExcelUpload: React.FC = () => {
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];//retrieves the first file selected by the user
         if (!file) return;
-
+        setLoading(true);
         try {
             // Read Excel file as binary data
             const data = await file.arrayBuffer();
@@ -93,7 +114,33 @@ const ExcelUpload: React.FC = () => {
             // { header: 1 }: Tells it to return a 2D array (not JSON objects)
             // Each inner array represents a row; each item in the array is a cell
             // raw is a """"""2D ARRAY""""""
+            setColumnsRaw(raw[2]);
+            const datatoTable = raw.slice(3);
+            const parsed: TableCourse[] = datatoTable.map(row => ({
+                code: row[0]?.toString() || '',
+                title: row[1]?.toString() || '',
+                credits: Number(row[2] || 0),
+                prerequisites: row[3]?.toString() || '',
+                corequisites: row[4]?.toString() || '',
+                type: row[5] as CourseType,
+                semesters: row[6] as SemesterType,
+            }));
+            setDataRaw(parsed);
+         
+            const columns = useMemo<ColumnsType<TableCourse>>(() => {
+                return (columnsRaw ?? []).map(header => {
+                    // use the header _as is_ for dataIndex/key (exact match)
+                    const dataIndex = header.trim() as keyof TableCourse;
 
+                    return {
+                        title: header,
+                        dataIndex,
+                        key: dataIndex,
+                    };
+                });
+            }, [columnsRaw]);
+           
+            
             console.log('Raw Excel Data:', raw);
             // single pre or co are showing as numbers
             // multiple pre or co dash seperated are showing as string
@@ -170,14 +217,13 @@ const ExcelUpload: React.FC = () => {
             const courses: Course[] = [];
             const courseMap = new Map<string, number>();
             const links: CourseLink[] = [];
-            let idCounter = 1;
 
             // First Pass: Create all courses
             raw.slice(headerIndex + 1).forEach((row) => {
                 if (!row[0] || row[0].toString().startsWith('Total') || row[0] === 'Code') return;
                 const courseid = row[0].match(/\d+/) ?? '';
                 const course: Course = {
-                    id: Number(courseid[0]),
+                  
                     code: row[0].toString().trim(),
                     title: `${row[0].toString().trim()}: ${row[1]?.toString().trim() || ''}`,
                     credits: Number(row[2]),
@@ -189,7 +235,10 @@ const ExcelUpload: React.FC = () => {
                 courses.push(course);
 
             });
-
+            const safeSplit = (s?: string) =>
+                (s ?? '')   // if s is null or undefined, use empty string
+                    .split('-')
+                    .filter(item => item && item !== 'undefined'); // drop empty or literal "undefined"
             // Second Pass: Process requirements
             raw.slice(headerIndex + 1).forEach((row) => {
                 if (!row[0] || row[0].toString().startsWith('Total') || row[0] === 'Code') return;
@@ -197,15 +246,22 @@ const ExcelUpload: React.FC = () => {
                 const currentCourseId = Number(courseid[0]);
                 if (!currentCourseId) return;
 
-                const processLinks = (codesPre: string, codesCo: string) => {
-                    const preArray = codesPre.split('-');
-                    const coArray = codesCo.split('-');
+                const processLinks = (codesPre?: string, codesCo?: string) => {
+                    const preArray = safeSplit(codesPre);
+                    const coArray = safeSplit(codesCo);
+
                     for (let i = 0, j = 0; i < preArray.length || j < coArray.length; i++, j++) {
-                        links.push({
-                            courseId: currentCourseId,
-                            coursePre: Number(preArray[i]),
-                            courseCo: Number(coArray[j]),
-                        });
+                        const pre = preArray[i] ?? null;
+                        const co = coArray[j] ?? null;
+
+                        // only push if there’s something real
+                        if (pre || co) {
+                            links.push({
+                                courseId: row[0],
+                                coursePre: pre,
+                                courseCo: co,
+                            });
+                        }
                     }
                 };
 
@@ -223,31 +279,75 @@ const ExcelUpload: React.FC = () => {
             });
 
         } catch (error) {
-            console.error('File Processing Error:', error);
-            alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            console.log('File Processing Error:', error);
+
+        } finally {
+            setLoading(false);
         }
     };
-
+    const columns: ColumnsType<Course> = [
+        { title: 'Code', dataIndex: 'code', key: 'code' },
+        { title: 'Title', dataIndex: 'title', key: 'title' },
+        { title: 'Credits', dataIndex: 'credits', key: 'credits' },
+        { title: 'Type', dataIndex: 'type', key: 'type' },
+        { title: 'Semesters', dataIndex: 'semesters', key: 'semesters' },
+        { title: 'Prerequisites', dataIndex: 'prerequisites', key: 'prerequisites' },
+        { title: 'Corequisites', dataIndex: 'corequisites', key: 'corequisites' },
+    ];
+    const handleSubmit = () => {
+        if (!planOfStudy || !selectedDept) return;
+        const dept = departments.find(d => d.id === selectedDept)!;
+        const payload = {
+            ...planOfStudy,
+            departmentId: dept.id,
+            departmentName: dept.name
+        };
+        console.log('Submitting Plan of Study:', payload);
+        notification.success;
+    };
     return (
-        <div className="p-4">
+        <div style={{ padding: 24 }}>
             <input
                 type="file"
                 accept=".xlsx,.xls"
                 onChange={handleFileUpload}
-                className="mb-4 p-2 border rounded block"
+                style={{ marginBottom: 16 }}
             />
 
-            {planOfStudy.courses.length > 0 ? (
-                <div className="mt-6">
-                    <h2 className="text-xl font-bold mb-3">Processed Study Plan</h2>
-                    <pre className="bg-gray-50 p-4 rounded-lg shadow-inner overflow-x-auto">
-                        {JSON.stringify(planOfStudy, null, 2)}
-                    </pre>
-                </div>
-            ) : (
-                <div className="text-gray-500 mt-4">
-                    No courses found - upload a valid Excel file
-                </div>
+            {planOfStudy && (
+                <>
+                    <div style={{ marginBottom: 16, display: 'flex', gap: 16 }}>
+                        <Select
+                            placeholder="Select Department"
+                            style={{ width: 240 }}
+                            onChange={value => setSelectedDept(value)}
+                            value={selectedDept || undefined}
+                        >
+                            {departments.map(d => (
+                                <Select.Option key={d.id} value={d.id}>
+                                    {d.name}
+                                </Select.Option>
+                            ))}
+                        </Select>
+
+                        <Button
+                            type="primary"
+                            disabled={!selectedDept || loading}
+                            onClick={handleSubmit}
+                        >
+                            Submit Plan of Study
+                        </Button>
+                    </div>
+
+                    <Table
+                        rowKey="code"
+                        loading={loading}
+                        dataSource={dataRaw}
+                        columns={columns}
+                        pagination={{ pageSize: 10 }}
+                    />
+                  
+                </>
             )}
         </div>
     );
