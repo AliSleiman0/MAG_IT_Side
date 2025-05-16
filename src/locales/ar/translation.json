@@ -1,0 +1,180 @@
+{
+  "common": {
+    "dashboard": "لوحة القيادة",
+    "change_theme": "تغيير المظهر",
+    "change_lang": "تغيير اللغة",
+    "confirm": "تأكيد",
+    "error": "خطأ",
+    "back": "رجوع"
+  },
+  "sider": {
+    "plan_of_study": "خطة الدراسة",
+    "dynamic_pos": "خطة دراسة ديناميكية",
+    "customized_pos": "خطة دراسة مخصصة",
+    "logout": "تسجيل الخروج",
+    "forget_pass": "نسيت كلمة المرور",
+    "profile": "الملف الشخصي",
+    "auth_pages": "المصادقة",
+    "schedule": "أداة الجدولة",
+    "advisor": "المستشارون المعنيون",
+    "chat": "الاتصال بالمستشار",
+    "advisor_text1": "المستشارون الأكاديميون",
+    "advisor_text2": "تعرف على أعضاء هيئة التدريس ذوي الخبرة المرتبطين بمدرستك وحرمك الجامعي",
+    "reach_out": "تواصل معنا"
+  },
+  "profile": {
+    "profile": "الملف الشخصي",
+    "personal_info": "المعلومات الشخصية",
+    "security_settings": "إعدادات الأمان",
+    "full_name": "الاسم الكامل",
+    "id": "المعرف",
+    "email": "البريد الإلكتروني",
+    "campus": "الحرم الجامعي",
+    "update_profile_image": "تحديث الملف الشخصي",
+    "basic": "تحميل أساسي",
+    "bulkUpload": "يمكنك تحديث صورة ملفك الشخصي هنا عن طريق سحب صورة جديدة",
+    "clickToUpload": "انقر للتحميل",
+    "directory": "دليل التحميل",
+    "dragger": "تحميل بالسحب",
+    "dragUpload": "انقر أو اسحب الملف إلى هذه المنطقة للتحميل",
+    "failedUpload": "فشل تحميل الملف {{name}}.",
+    "successUpload": "تم تحميل الملف {{name}} بنجاح.",
+    "change_password": "تغيير كلمة المرور",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور",
+    "required": "مطلوب"
+  },
+  "securitySettings": {
+    "changePassword": "تغيير كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "dontMatchPassword": "كلمتا المرور اللتان أدخلتهما غير متطابقتين",
+    "newPassword": "كلمة المرور الجديدة",
+    "notValidPassword": "يجب أن تكون كلمة المرور مكونة من ثمانية أحرف على الأقل وتحتوي على حرف كبير وحرف صغير ورقم واحد",
+    "requiredPassword": "الرجاء إدخال كلمة المرور!",
+    "samePassword": "لا يمكن أن تكون كلمة المرور الجديدة هي نفس كلمة المرور السابقة",
+    "title": "إعدادات الأمان",
+    "twoFactorAuth": "المصادقة الثنائية",
+    "verify": "تحقق"
+  },
+  "welcome": {
+    "semester_fall": " الفصل الدراسي الخريفي",
+    "semester_spring": " الفصل الدراسي الربيعي",
+    "semester_summer": " الفصل الدراسي الصيفي",
+    "title": "مرحباً بعودتك! إنه ",
+    "registration": "التسجيل ",
+    "reg_status_open": "حالياً مفتوح ",
+    "reg_status_closed": " حالياً مغلق",
+    "contact": "اذا كان لديك أي أسئلة، فلا تتردد في الاتصال بمستشارك."
+  },
+  "courses": {
+    "my_courses": "دوراتي",
+    "completed_vs_required": {
+      "title": "الدورات المكتملة مقابل المطلوبة",
+      "progress": "التقدم",
+      "completed": "مكتمل",
+      "remaining": "متبقي"
+    },
+    "passed_percentage": {
+      "title": "نسبة الدورات الناجحة/المأخوذة",
+      "percentage": "النسبة",
+      "passed": "ناجحة",
+      "failed": "راسب"
+    },
+    "credits": {
+      "credits": "الساعات المعتمدة",
+      "title": "الساعات المعتمدة المكتملة",
+      "progress": "التقدم",
+      "completed": "مكتمل",
+      "remaining": "متبقي",
+
+      "failed_withdrawn": "راسب / منسحب"
+
+    },
+    "course_types": {
+      "Core": "أساسي",
+      "Major": "تخصص",
+      "Major Elective": "اختياري التخصص",
+      "General Elective": "اختياري عام",
+      "General Education": "التعليم العام"
+    },
+    "courses_lists": {
+      "completed_courses": "الدورات المكتملة",
+      "currently_registered": "المسجل حاليًا",
+      "remianing_failed_courses": "الدورات المتبقية-الراسبة"
+    },
+    "register_status": {
+      "can_register": "يمكنك التسجيل في هذه الدورة",
+      "cannot_register": "لا يمكنك التسجيل في هذه الدورة"
+    },
+    "failed_withdrawn_status": {
+      "status_f": "يتطلب إعادة",
+      "status_w": "منسحب"
+    }
+  },
+  "days": {
+    "monday": "الإثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت",
+    "sunday": "الأحد",
+    "mon_wed": "الإثنين، الأربعاء",
+    "tues_thurs": "الثلاثاء، الخميس"
+  },
+  "time_periods": {
+    "am": "ص",
+    "pm": "م"
+  },
+  "footer": {
+    "f_text1": "تم الإنشاء بواسطة",
+    "f_text2": "في",
+    "f_text3": ". بناءً على"
+  },
+  "grades": {
+    "distribution": "توزيع علاماتي"
+  },
+  "pos": {
+    "show": "عرض حالة المواد الدراسية",
+    "prerequisites": "المتطلبات السابقة",
+    "corequisites": "المتطلبات المتزامنة",
+    "legends": "الوسوم التوضيحية",
+    "passed_course": "مادة تم اجتيازها",
+    "registered_course": "مادة مسجلة",
+    "failed_course": "مادة راسبة",
+    "source_course": "المادة المصدر",
+    "target_course": "المادة الهدف",
+    "text": "خطة دراسة "
+  },
+  "customised_pos": {
+    "title": "خطة الدراسة المخصصة لـ ",
+    "Best_title": "أفضل خطة دراسية لـ ",
+    "generate_remaining_semesters": "إنشاء الفصول الدراسية المتبقية",
+    "place_holder": "أضف مواد لملء خطتك!",
+    "select": "اختر",
+    "priority": "الأولوية",
+    "course_name": "اسم المادة",
+    "code": "الكود",
+    "type": "النوع",
+    "credits": "ساعات معتمدة",
+    "modal_title_generate": "تأكيد الإنشاء",
+    "modal_text_generate_customized": "سنقوم بإنشاء الفصول الدراسية المتبقية ",
+    "modal_text_generate_customized1": "بناءً على خطة الفصل القادم الخاصة بك.",
+    "modal_text_generate_customized2": "قد تستغرق هذه العملية بعض الوقت.",
+    "modal_text_generate_dynamic": "سنقوم بإنشاء الفصول الدراسية المتبقية بناءً على أفضل خطة للفصل القادم. قد تستغرق هذه العملية بعض الوقت.",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "show_full_timeline": "عرض الجدول الزمني الكامل",
+    "generated_semesters": "الفصول الدراسية المولدة",
+    "collapse_view": "طي العرض",
+    "creating_your_optimal_semester_plan": "جاري إنشاء خطة الفصل الدراسي المثالية لك...",
+    "courses_eligible_for_registration_below": "المواد المؤهلة للتسجيل أدناه:",
+    "modal_max1": "الحد الأقصى المسموح به 20 ساعة معتمدة. المحدد حالياً: ",
+    "modal_max2": "يرجى إلغاء تحديد بعض المواد قبل اختيار مواد جديدة.",
+    "upcoming": "القادم",
+    "credits_selected": "الساعات المعتمدة المحددة",
+    "no_courses_available": "لا توجد مواد متاحة"
+
+  }
+}

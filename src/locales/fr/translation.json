@@ -1,0 +1,182 @@
+{
+  "common": {
+    "dashboard": "Tableau de bord",
+    "change_theme": "Changer le thème",
+    "change_lang": "Changer de langue",
+    "confirm": "Confirmer",
+    "error": "Erreur",
+    "back": "Retour"
+  },
+  "sider": {
+    "plan_of_study": "POS",
+    "dynamic_pos": "POS dynamique",
+    "customized_pos": "POS personnalisé",
+    "logout": "Déconnexion",
+    "forget_pass": "Mot de passe oublié",
+    "profile": "Profil",
+    "auth_pages": "Authentification",
+    "schedule": "Outil de planification",
+    "advisor": "Conseillers respectifs",
+    "chat": "Contacter le conseiller",
+    "advisor_text1": "Conseillers académiques",
+    "advisor_text2": "Rencontrez nos membres du corps professoral expérimentés correspondant à votre école et campus",
+    "reach_out": "Nous contacter"
+  },
+  "profile": {
+    "profile": "Profil",
+    "personal_info": "Infos personnelles",
+    "security_settings": "Paramètres de sécurité",
+    "full_name": "Nom complet",
+    "id": "Identifiant",
+    "email": "E-mail",
+    "campus": "Campus",
+    "update_profile_image": "Mettre à jour l’image de profil",
+    "basic": "Téléchargement de base",
+    "bulkUpload": "Vous pouvez mettre à jour votre photo de profil ici en glissant une nouvelle photo",
+    "clickToUpload": "Cliquez pour télécharger",
+    "directory": "Répertoire de téléchargement",
+    "dragger": "Téléchargement par glisser-déposer",
+    "dragUpload": "Cliquez ou faites glisser le fichier vers cette zone pour télécharger",
+    "failedUpload": "Échec du téléchargement du fichier {{name}}.",
+    "successUpload": "Le fichier {{name}} a été téléchargé avec succès.",
+    "change_password": "Changer le mot de passe",
+    "new_password": "Nouveau mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "required": "Requis"
+  },
+  "securitySettings": {
+    "changePassword": "Changer le mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "dontMatchPassword": "Les deux mots de passe que vous avez saisis ne correspondent pas",
+    "newPassword": "Nouveau mot de passe",
+    "notValidPassword": "Votre mot de passe doit contenir au moins huit caractères, dont au moins une lettre majuscule, une lettre minuscule et un chiffre",
+    "requiredPassword": "Veuillez saisir votre mot de passe !",
+    "samePassword": "Votre nouveau mot de passe ne peut pas être identique à l’ancien mot de passe",
+    "title": "Paramètres de sécurité",
+    "twoFactorAuth": "Authentification à deux facteurs",
+    "verify": "Vérifier"
+  },
+  "welcome": {
+    "semester_fall": "Semestre d'automne",
+    "semester_spring": "Semestre de printemps",
+    "semester_summer": "Semestre d'été",
+    "title": "Bon retour ! C'est ",
+    "registration": "Les inscriptions sont actuellement ouvertes",
+    "regStatus_open": "Ouvert",
+    "regStatus_closed": "Fermé",
+    "contact": "Si vous avez des questions, n'hésitez pas à contacter votre conseiller."
+  },
+  "courses": {
+    "my_courses": "Mes cours",
+    "completed_vs_required": {
+      "title": "Cours terminés vs. requis",
+      "progress": "Progression",
+      "completed": "Terminés",
+      "remaining": "Restants"
+    },
+    "passed_percentage": {
+      "title": "Pourcentage de cours réussis/suivis",
+      "percentage": "Pourcentage",
+      "passed": "Réussis",
+      "failed": "Échoués"
+    },
+    "credits": {
+      "credits": "Crédits",
+      "title": "Crédits complétés",
+      "progress": "Progression",
+      "completed": "Complétés",
+      "remaining": "Restants",
+      "failed_withdrawn": "Échoué / Abandonné"
+    },
+    "course_types": {
+      "Core": "Tronc commun",
+      "Major": "Majeure",
+      "Major Elective": "Électif de majeure",
+      "General Elective": "Électif général",
+      "General Education": "Éducation générale"
+    },
+    "courses_lists": {
+      "completed_courses": "Cours terminés",
+      "currently_registered": "Actuellement inscrit",
+      "remianing_failed_courses": "Cours restants échoués"
+    },
+
+    "register_status": {
+      "can_register": "Vous pouvez vous inscrire à ce cours",
+      "cannot_register": "Vous ne pouvez pas vous inscrire à ce cours"
+    },
+    "failed_withdrawn_status": {
+      "status_f": "Reprise nécessaire",
+      "status_w": "Abandonné"
+    }
+  },
+
+  "days": {
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche",
+    "mon_wed": "Lundi, Mercredi",
+    "tues_thurs": "Mardi, Jeudi"
+  },
+  "time_periods": {
+    "am": "AM",
+    "pm": "PM"
+  },
+  "footer": {
+    "f_text1": "Fait par",
+    "f_text2": "en",
+    "f_text3": ". Basé sur"
+  },
+  "grades": {
+    "distribution": "Répartition de mes notes"
+  },
+  "pos": {
+    "show": "Afficher l'état des cours",
+    "prerequisites": "Prérequis",
+    "corequisites": "Cohoraires",
+    "legends": "Légendes",
+    "passed_course": "Cours Réussi",
+    "registered_course": "Cours Inscrit",
+    "failed_course": "Cours Échoué",
+    "source_course": "Cours source",
+    "target_course": "Cours cible",
+    "text": "Plan d'études de "
+  },
+  "customised_pos": {
+    "title": "Plan d'Études Personnalisé pour ",
+    "Best_title": "Meilleur plan d'étude pour ",
+
+    "generate_remaining_semesters": "Générer les Semestres Restants",
+    "place_holder": "Ajoutez des Cours pour Compléter votre Plan !",
+    "select": "Sélectionner",
+    "priority": "Priorité",
+    "course_name": "Nom du Cours",
+    "code": "Code",
+    "type": "Type",
+    "credits": "crédits",
+    "modal_title_generate": "Confirmer la Génération",
+    "modal_text_generate_customized": "Nous générerons vos semestres restants ",
+    "modal_text_generate_customized1": "sur la base de votre plan de semestre à venir.",
+    "modal_text_generate_customized2": "Ce processus peut prendre un moment.",
+    "modal_text_generate_dynamic": "Nous générerons vos semestres restants sur la base du meilleur plan de semestre à venir. Ce processus peut prendre un moment.",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "show_full_timeline": "Afficher la Chronologie Complète",
+    "generated_semesters": "Semestres Générés",
+    "collapse_view": "Réduire la Vue",
+    "creating_your_optimal_semester_plan": "Création de votre plan de semestre optimal...",
+    "courses_eligible_for_registration_below": "Cours Éligibles à l'Inscription Ci-Dessous :",
+    "modal_max1": "Maximum 20 crédits autorisés. Actuellement sélectionnés : ",
+    "modal_max2": "Veuillez désélectionner certains cours avant d'en choisir de nouveaux.",
+    "upcoming": "à venir",
+    "credits_selected": "Crédits Sélectionnés",
+    "no_courses_available": "Aucun cours disponible"
+
+
+  }
+}
