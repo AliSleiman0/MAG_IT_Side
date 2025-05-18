@@ -2,8 +2,9 @@
 import { Select, Button, notification } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { text } from 'node:stream/consumers';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { uploadPOS } from '../../apiMAG/students';
 
 export interface PlanOfStudy {
     departmentId: number;
@@ -46,19 +47,16 @@ export type SemesterType =
     | 'Fall-Spring-Summer';
 
 export interface CourseLink {
-    courseId: string;
+    coursecode: string;
     coursePre: string;
     courseCo: string;
 }
-const departments = [
-    { id: 101, name: 'Communication Engineering' },
-    { id: 102, name: 'Computer Science' },
-    { id: 103, name: 'Mechanical Engineering' }
-];
+
 
 //$env:NODE_OPTIONS = "--openssl-legacy-provider"; yarn start
 const ExcelUpload: React.FC = () => {
-    const [selectedDept, setSelectedDept] = useState<number | null>(null);
+   
+   
     const [loading, setLoading] = useState(false);
     const [columnsRaw, setColumnsRaw] = useState<string[]>();
     const [dataRaw, setDataRaw] = useState<TableCourse[]>([]);
@@ -127,18 +125,7 @@ const ExcelUpload: React.FC = () => {
             }));
             setDataRaw(parsed);
          
-            const columns = useMemo<ColumnsType<TableCourse>>(() => {
-                return (columnsRaw ?? []).map(header => {
-                    // use the header _as is_ for dataIndex/key (exact match)
-                    const dataIndex = header.trim() as keyof TableCourse;
-
-                    return {
-                        title: header,
-                        dataIndex,
-                        key: dataIndex,
-                    };
-                });
-            }, [columnsRaw]);
+           
            
             
             console.log('Raw Excel Data:', raw);
@@ -257,7 +244,7 @@ const ExcelUpload: React.FC = () => {
                         // only push if there’s something real
                         if (pre || co) {
                             links.push({
-                                courseId: row[0],
+                                coursecode: row[0],
                                 coursePre: pre,
                                 courseCo: co,
                             });
@@ -277,7 +264,7 @@ const ExcelUpload: React.FC = () => {
                 courses,
                 prerequisitesCorequisites: links
             });
-
+          
         } catch (error) {
             console.log('File Processing Error:', error);
 
@@ -285,6 +272,9 @@ const ExcelUpload: React.FC = () => {
             setLoading(false);
         }
     };
+    useEffect(() => {
+        console.log('Updated planOfStudy:', planOfStudy);
+    }, [planOfStudy]);
     const columns: ColumnsType<Course> = [
         { title: 'Code', dataIndex: 'code', key: 'code' },
         { title: 'Title', dataIndex: 'title', key: 'title' },
@@ -294,16 +284,32 @@ const ExcelUpload: React.FC = () => {
         { title: 'Prerequisites', dataIndex: 'prerequisites', key: 'prerequisites' },
         { title: 'Corequisites', dataIndex: 'corequisites', key: 'corequisites' },
     ];
-    const handleSubmit = () => {
-        if (!planOfStudy || !selectedDept) return;
-        const dept = departments.find(d => d.id === selectedDept)!;
-        const payload = {
-            ...planOfStudy,
-            departmentId: dept.id,
-            departmentName: dept.name
-        };
-        console.log('Submitting Plan of Study:', payload);
-        notification.success;
+    const handleSubmit = async () => {
+        if (!planOfStudy ) {
+            notification.error({
+                message: 'Missing Information',
+                description: 'Please make sure a department and a plan of study are selected.',
+            });
+            return;
+        }
+        console.log("pos", planOfStudy);
+        try {
+            setLoading(true);
+           
+            const response = await uploadPOS(planOfStudy);
+
+            notification.success({
+                message: 'Plan of Study Uploaded',
+                description: response || 'The plan of study has been saved successfully.',
+            });
+        } catch (error: any) {
+            notification.error({
+                message: 'Upload Failed',
+                description: error.message || 'An error occurred while uploading the plan of study.',
+            });
+        } finally {
+            setLoading(false);
+        }
     };
     return (
         <div style={{ padding: 24 }}>
@@ -317,24 +323,12 @@ const ExcelUpload: React.FC = () => {
             {planOfStudy && (
                 <>
                     <div style={{ marginBottom: 16, display: 'flex', gap: 16 }}>
-                        <Select
-                            placeholder="Select Department"
-                            style={{ width: 240 }}
-                            onChange={value => setSelectedDept(value)}
-                            value={selectedDept || undefined}
-                        >
-                            {departments.map(d => (
-                                <Select.Option key={d.id} value={d.id}>
-                                    {d.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                      
 
                         <Button
                             type="primary"
-                            disabled={!selectedDept || loading}
-                            onClick={handleSubmit}
-                        >
+                            disabled={ loading}
+                            onClick={handleSubmit} loading={loading}>
                             Submit Plan of Study
                         </Button>
                     </div>

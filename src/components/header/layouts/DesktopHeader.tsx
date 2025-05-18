@@ -41,9 +41,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({ isTwoColumnsLayout
 
              
 
-              <BaseCol>
-                <SettingsDropdown />
-              </BaseCol>
+             
             </BaseRow>
           </BaseCol>
 
