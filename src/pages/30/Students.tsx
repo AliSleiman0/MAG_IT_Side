@@ -1,25 +1,52 @@
 ﻿// ExcelUpload.tsx
-import { Select, Button, notification } from 'antd';
+import { Select, Button, notification, Typography, Spin, Modal } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
 import { text } from 'node:stream/consumers';
 import React, { useEffect, useMemo, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { uploadPOS } from '../../apiMAG/students';
+import { DeletePOS, GetDepartmentsPOS, uploadPOS } from '../../apiMAG/students';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { ExclamationCircleFilled, EyeInvisibleOutlined, EyeOutlined, WarningFilled } from '@ant-design/icons';
 
+export const queryClient = new QueryClient({
+   
+    defaultOptions: {
+        queries: {
+            // retry once on failure
+            retry: 1,
+            // stale after 5 minutes
+            staleTime: 1000 * 60 * 5,
+        },
+    },
+});
+
+export interface Course {
+    code: string;
+    title: string;
+    credits: number;
+    type: CourseType;
+    semesters: SemesterType;
+}
+export interface CourseGet {
+    code: string;
+    corequisites: string;
+    prerequisites: string;
+    title: string;
+    credits: number;
+    type: CourseType;
+    semesters: SemesterType;
+}
 export interface PlanOfStudy {
     departmentId: number;
     departmentName: string;
     courses: Course[];
     prerequisitesCorequisites: CourseLink[];
 }
-
-export interface Course {
-  
-    code: string;
-    title: string;
-    credits: number;
-    type: CourseType;
-    semesters: SemesterType;
+export interface PlanOfStudyGet {
+    departmentId: number;
+    departmentName: string;
+    courses: CourseGet[];
+    prerequisitesCorequisites: CourseLinkGet[];
 }
 export interface TableCourse {
     code: string;
@@ -51,40 +78,14 @@ export interface CourseLink {
     coursePre: string;
     courseCo: string;
 }
-
+export interface CourseLinkGet {
+    coursecode: string;
+    prerequisiteCourseCode: string;
+    corequisiteCourseCode: string;
+}
 
 //$env:NODE_OPTIONS = "--openssl-legacy-provider"; yarn start
 const ExcelUpload: React.FC = () => {
-   
-   
-    const [loading, setLoading] = useState(false);
-    const [columnsRaw, setColumnsRaw] = useState<string[]>();
-    const [dataRaw, setDataRaw] = useState<TableCourse[]>([]);
-    const [planOfStudy, setPlanOfStudy] = useState<PlanOfStudy>({
-        departmentId: 0,
-        departmentName: '',
-        courses: [],
-        prerequisitesCorequisites: []
-    });
-
-    const formatCourseType = (rawType: string | undefined): CourseType => {
-        const cleaned = (rawType || 'Core')
-            .toString()
-            .trim()
-
-
-        const validTypes: CourseType[] = [
-            'Core',
-            'Major',
-            'Major Elective',
-            'General Elective',
-            'General Requirement'
-        ];
-
-        return validTypes.includes(cleaned as CourseType)
-            ? cleaned as CourseType
-            : 'Core';
-    };
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];//retrieves the first file selected by the user
@@ -124,10 +125,10 @@ const ExcelUpload: React.FC = () => {
                 semesters: row[6] as SemesterType,
             }));
             setDataRaw(parsed);
-         
-           
-           
-            
+
+
+
+
             console.log('Raw Excel Data:', raw);
             // single pre or co are showing as numbers
             // multiple pre or co dash seperated are showing as string
@@ -210,7 +211,7 @@ const ExcelUpload: React.FC = () => {
                 if (!row[0] || row[0].toString().startsWith('Total') || row[0] === 'Code') return;
                 const courseid = row[0].match(/\d+/) ?? '';
                 const course: Course = {
-                  
+
                     code: row[0].toString().trim(),
                     title: `${row[0].toString().trim()}: ${row[1]?.toString().trim() || ''}`,
                     credits: Number(row[2]),
@@ -264,7 +265,7 @@ const ExcelUpload: React.FC = () => {
                 courses,
                 prerequisitesCorequisites: links
             });
-          
+
         } catch (error) {
             console.log('File Processing Error:', error);
 
@@ -272,9 +273,86 @@ const ExcelUpload: React.FC = () => {
             setLoading(false);
         }
     };
-    useEffect(() => {
-        console.log('Updated planOfStudy:', planOfStudy);
-    }, [planOfStudy]);
+    const useDepartmentsPOS = () => {
+        const queryResult = useQuery<PlanOfStudyGet[], Error>({
+            queryKey: ['departmentsPOS'],
+            queryFn: GetDepartmentsPOS,
+            staleTime: 1000 * 60 * 5,
+        });
+
+        // Create transformed data while preserving original
+        const transformedDepartments = React.useMemo(() => {
+            if (!queryResult.data) return undefined;
+            return queryResult.data.map(dept => ({
+                departmentId: dept.departmentId,
+                departmentName: dept.departmentName,
+                courses: dept.courses
+            }));
+        }, [queryResult.data]); // Only recompute when data changes
+
+        console.log("transformedDepartments", transformedDepartments);
+        return {
+            ...queryResult,          // Spread all original query properties
+            departments: queryResult.data,  // Original untransformed data
+            tableCourses: transformedDepartments,  // New transformed data
+        };
+    };
+    const {
+        departments,     // Original PlanOfStudy[] data
+        tableCourses,    // Transformed TableCourse[] data
+        isLoading,
+        isError,
+        error,
+        refetch
+    } = useDepartmentsPOS();
+
+    const [selectedTableSource, setSelectedTableSource] = useState<TableCourse[]>(
+        tableCourses?.[0]?.courses || []
+    );
+    const [selectedPOS, setSelectedPOS] = useState<{
+        departmentId: number;
+        departmentName: string;
+    } | null>(departments?.[0]
+        ? {
+            departmentId: departments[0].departmentId,
+            departmentName: departments[0].departmentName,
+        }
+        : null);
+
+
+   
+    const [showUploaded, setShowUploaded] = useState<boolean>();
+    const [loading, setLoading] = useState(false);
+    const [columnsRaw, setColumnsRaw] = useState<string[]>();
+    const [dataRaw, setDataRaw] = useState<TableCourse[]>([]);
+    const [planOfStudy, setPlanOfStudy] = useState<PlanOfStudy>({
+        departmentId: 0,
+        departmentName: '',
+        courses: [],
+        prerequisitesCorequisites: []
+    });
+
+    const formatCourseType = (rawType: string | undefined): CourseType => {
+        const cleaned = (rawType || 'Core')
+            .toString()
+            .trim()
+
+
+        const validTypes: CourseType[] = [
+            'Core',
+            'Major',
+            'Major Elective',
+            'General Elective',
+            'General Requirement'
+        ];
+
+        return validTypes.includes(cleaned as CourseType)
+            ? cleaned as CourseType
+            : 'Core';
+    };
+
+   
+  
     const columns: ColumnsType<Course> = [
         { title: 'Code', dataIndex: 'code', key: 'code' },
         { title: 'Title', dataIndex: 'title', key: 'title' },
@@ -284,67 +362,293 @@ const ExcelUpload: React.FC = () => {
         { title: 'Prerequisites', dataIndex: 'prerequisites', key: 'prerequisites' },
         { title: 'Corequisites', dataIndex: 'corequisites', key: 'corequisites' },
     ];
+    const columnsplus: ColumnsType<TableCourse> = [
+        { title: 'Code', dataIndex: 'code', key: 'code' },
+        { title: 'Title', dataIndex: 'title', key: 'title' },
+        { title: 'Credits', dataIndex: 'credits', key: 'credits' },
+        { title: 'Type', dataIndex: 'type', key: 'type' },
+        { title: 'Semesters', dataIndex: 'semesters', key: 'semesters' },
+        { title: 'Prerequisites', dataIndex: 'prerequisites', key: 'prerequisites' },
+        { title: 'Corequisites', dataIndex: 'corequisites', key: 'corequisites' },
+    ];
     const handleSubmit = async () => {
-        if (!planOfStudy ) {
+        if (!planOfStudy || !selectedPOS) {
             notification.error({
                 message: 'Missing Information',
-                description: 'Please make sure a department and a plan of study are selected.',
+                description: 'Please select a department and plan of study.',
             });
             return;
         }
-        console.log("pos", planOfStudy);
-        try {
-            setLoading(true);
-           
-            const response = await uploadPOS(planOfStudy);
 
-            notification.success({
-                message: 'Plan of Study Uploaded',
-                description: response || 'The plan of study has been saved successfully.',
-            });
-        } catch (error: any) {
-            notification.error({
-                message: 'Upload Failed',
-                description: error.message || 'An error occurred while uploading the plan of study.',
-            });
-        } finally {
-            setLoading(false);
-        }
+        Modal.confirm({
+            title: 'Confirm Plan of Study Update',
+            icon: <ExclamationCircleFilled />,
+            content: (
+                <div>
+                    <p>This action will:</p>
+                    <ol>
+                        <li>Delete existing POS for <strong>{selectedPOS.departmentName}</strong></li>
+                        <li>Upload the new plan of study</li>
+                    </ol>
+                    <p style={{ color: '#ff4d4f', marginTop: 8 }}>
+                        <WarningFilled /> This action cannot be undone.
+                    </p>
+                </div>
+            ),
+            okText: 'Confirm Update',
+            cancelText: 'Cancel',
+            okButtonProps: {
+                danger: true,
+                style: { backgroundColor: '#038b94', borderColor: '#038b94' }
+            },
+            onOk: async () => {
+                try {
+                    setLoading(true);
+
+                    // First delete existing POS
+                    const deleteResponse = await DeletePOS(selectedPOS.departmentId);
+                    notification.success({
+                        message: 'Existing POS Removed',
+                        description: deleteResponse || 'Previous plan of study deleted successfully.',
+                    });
+
+                    // Then upload new POS
+                    const uploadResponse = await uploadPOS({
+                        ...planOfStudy,
+                        departmentId: selectedPOS.departmentId,
+                        departmentName: selectedPOS.departmentName
+                    });
+
+                    notification.success({
+                        message: 'New POS Uploaded',
+                        description: uploadResponse || 'New plan of study saved successfully.',
+                        duration: 4.5,
+                    });
+
+                    // Refresh data after successful update
+                  //  await queryClient.invalidateQueries(['departmentsPOS']);
+
+                } catch (error: any) {
+                    const errorMessage = error.response?.data?.message || error.message || 'Operation failed';
+
+                    notification.error({
+                        message: 'Update Failed',
+                        description: (
+                            <div>
+                                <p>{errorMessage}</p>
+                                <Button
+                                    type="link"
+                                    danger
+                                    onClick={() => handleSubmit()}
+                                    style={{ paddingLeft: 0 }}
+                                >
+                                    Try Again
+                                </Button>
+                            </div>
+                        ),
+                        duration: 0, // Persistent until closed
+                    });
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
     };
+  
+    useEffect(() => {
+        if (selectedPOS && tableCourses) {
+            console.log("selectedPOS", selectedPOS);
+            const selectedDepartment = tableCourses.find(
+                (dept: { departmentId: number }) => dept.departmentId === selectedPOS.departmentId
+            );
+            console.log("selectedDepartment", selectedDepartment);
+            setSelectedTableSource(selectedDepartment?.courses || []);
+        }
+        else 
+            setSelectedTableSource(tableCourses?.[0].courses || []);
+    }, [selectedPOS, tableCourses]);
+    useEffect(() => {
+        console.log("selectedTableSource", selectedTableSource);
+        
+    }, [selectedTableSource]);
+    // Transform the value for display
+  
+    const handleDepartmentSelect = (value: number) => {
+        const dep = departments?.find((dep) => dep.departmentId === value);
+        setSelectedPOS({
+            departmentId: dep?.departmentId ?? 0,
+            departmentName: dep?.departmentName ?? ''
+        });
+    };
+    //useEffect(() => {
+    //    console.log("selectedPOS", selectedPOS);
+    //}, [selectedPOS]);
     return (
-        <div style={{ padding: 24 }}>
-            <input
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleFileUpload}
-                style={{ marginBottom: 16 }}
-            />
+        <div style={{
+      
+            maxWidth: 1700,
+            margin: '0 auto'
+        }}>
+            {/* Action Buttons */}
+            {planOfStudy.departmentId !== 0 && (
+                <div style={{
+                    display: 'flex',
+                    gap: 16,
+                    marginBottom: 24,
+                    borderBottom: `1px solid #038b94`,
+                    paddingBottom: 16
+                }}>
+                    <Button
+                        icon={showUploaded ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                        onClick={() => setShowUploaded(prev => !prev)}
+                        style={{
+                            borderColor: '#038b94',
+                            color: '#038b94',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8
+                        }}
+                    >
+                        {showUploaded ? 'Hide Uploaded' : 'Show Uploaded'}
+                    </Button>
 
-            {planOfStudy && (
-                <>
-                    <div style={{ marginBottom: 16, display: 'flex', gap: 16 }}>
-                      
-
+                    {showUploaded && (
                         <Button
                             type="primary"
-                            disabled={ loading}
-                            onClick={handleSubmit} loading={loading}>
+                            disabled={loading}
+                            onClick={handleSubmit}
+                            loading={loading}
+                            style={{
+                                backgroundColor: '#038b94',
+                                borderColor: '#026a70',
+
+                            }}
+                        >
                             Submit Plan of Study
                         </Button>
-                    </div>
+                    )}
+                </div>
+            )}
+            {/* File Upload Section */}
+            <div style={{
+                display: 'flex',
+                gap: 16,
+                alignItems: 'center',
+                marginBottom: 24
+            }}>
 
+                <div>
+                    {/*<span style={{*/}
+
+                    {/*    left: 12,*/}
+                    {/*    top: '50%',*/}
+                    {/*    transform: 'translateY(-50%)',*/}
+                    {/*    color: '#038b94',*/}
+                    {/*    pointerEvents: 'none'*/}
+                    {/*}}>*/}
+                    {/*    📁 Upload Excel File*/}
+                    {/*</span>*/}
+                    <input
+                        type="file"
+                        accept=".xlsx,.xls"
+                        onChange={handleFileUpload}
+                        style={{
+                            padding: '8px 12px',
+                            border: `1px solid #038b94`,
+                            borderRadius: 4,
+                            cursor: 'pointer',
+                            backgroundColor: 'transparent',
+                        }}
+                    />
+                  
+                </div>
+
+                <Select
+                    loading={isLoading}
+                    placeholder={isLoading ? 'Loading departments...' : 'Select department'}
+                    style={{ width: 300 }}
+                    value={selectedPOS?.departmentId}
+                    onSelect={(value: number) => handleDepartmentSelect(value)}
+                >
+                    {(departments ?? []).map((department) => (
+                        <Select.Option
+                            key={department.departmentId}
+                            value={department.departmentId}
+                        >
+                            {`${department.departmentId} - ${department.departmentName}`}
+                        </Select.Option>
+                    ))}
+                </Select>
+            </div>
+
+         
+
+            {/* Tables Section */}
+            <div style={{ display: 'grid', gap: 32 }}>
+                {showUploaded && (
                     <Table
-                        rowKey="code"
+                        title={() => (
+                            <Typography.Title
+                                level={4}
+                                style={{
+                                    fontSize: "1.2rem",
+                                    color: '#038b94',
+                                    margin: 0
+                                }}
+                            >
+                                View Uploaded POS
+                            </Typography.Title>
+                        )}
+                       
                         loading={loading}
                         dataSource={dataRaw}
                         columns={columns}
                         pagination={{ pageSize: 10 }}
+                        bordered
+                        style={{
+                            border: `1px solid #038b94`,
+                            borderRadius: 8
+                        }}
                     />
+                )}
+                <Table
+                    title={() => (
+                        <Typography.Title
+                            level={4}
+                            style={{
+                                fontSize: "1.2rem",
+                                color: '#038b94',
+                                margin: 0
+                            }}
+                        >
+                            Existing Departments POS
+                        </Typography.Title>
+                    )}
                   
-                </>
-            )}
+                    loading={loading}
+                    dataSource={selectedTableSource}
+                    columns={columnsplus}
+                    pagination={{ pageSize: 10 }}
+                    bordered
+                    style={{
+                        border: `1px solid #038b94`,
+                        borderRadius: 8
+                    }}
+                />
+
+            
+            </div>
         </div>
     );
 };
 
-export default ExcelUpload;
+function App() {
+    return (
+        <QueryClientProvider client={queryClient}>
+
+            <ExcelUpload />
+        </QueryClientProvider>
+    );
+}
+
+export default App;
